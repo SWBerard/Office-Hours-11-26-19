@@ -77,4 +77,10 @@ class MyTableViewController: UITableViewController {
             return UITableViewCell()
         }
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let mainVC = MainViewController(data: "Dog")
+        navigationController?.pushViewController(mainVC, animated: true)
+//        present(mainVC, animated: true, completion: nil)
+    }
 }
