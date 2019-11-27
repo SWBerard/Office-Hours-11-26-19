@@ -18,7 +18,7 @@ class MyTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        for index in 1 ... 10 {
+        for index in 1 ... 100 {
             dataArray.append("New Object: \(index)")
         }
         
@@ -26,9 +26,13 @@ class MyTableViewController: UITableViewController {
             adArray.append(index)
         }
         
+        var count = 0
+        
         for (index, data) in dataArray.enumerated() {
-            if index % 3 == 0 {
-                realArray.append(adArray[0])
+            if index % 3 == 0 && index != 0 {
+                realArray.append(adArray[count])
+                count += 1
+                count = count % adArray.count
             }
             
             realArray.append(data)
@@ -44,37 +48,33 @@ class MyTableViewController: UITableViewController {
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return dataArray.count + dataArray.count / 3
+        return realArray.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        if indexPath.row % 3 == 0 {
-            
-            print("We should show an ad: \(indexPath.row)")
-            print("This should be interesting: \(indexPath.row / 3)")
-            
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "Ad Cell") as? AdTableViewCell else {
+        if let data = realArray[indexPath.row] as? String {
+            // Regular Cell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "Regular Cell") as? RegularTableViewCell else {
                 return UITableViewCell()
             }
             
-            let ad = adArray[0]
+            cell.nameLabel.text = data
+            
+            return cell
+        }
+        else if let ad = realArray[indexPath.row] as? Int {
+            // Ad Cell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "Ad Cell") as? AdTableViewCell else {
+                return UITableViewCell()
+            }
             
             cell.nameLabel.text = "\(ad)"
             
             return cell
         }
-        
-        let realRow = indexPath.row - 1 - (indexPath.row / 3)
-        
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "Regular Cell") as? RegularTableViewCell else {
+        else {
             return UITableViewCell()
         }
-        
-        let data = dataArray[realRow]
-        
-        cell.nameLabel.text = data
-        
-        return cell
     }
 }
